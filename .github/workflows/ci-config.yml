@@ -1,0 +1,271 @@
+name: ECAP5-DWBMMSC continuous integration
+
+on:
+  push:
+    branches: [ "main", "release/**" ]
+  pull_request:
+    branches: [ "main", "release/**" ]
+
+permissions:
+  actions: write
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+  REPORT_ARTIFACT_NAME: ecap5-dwbmmsc-report-${{github.run_number}}-${{github.run_attempt}}
+  DOCUMENTATION_ARTIFACT_NAME: ecap5-dwbmmsc-docs-${{github.run_number}}-${{github.run_attempt}}
+  BUILD_CACHE_KEY: simulation-build-directory-${{ github.run_id }}-${{ github.run_attempt }}
+
+jobs:
+  prepare:
+    runs-on: self-hosted
+
+    steps:
+    - uses: actions/checkout@v4.1.1
+
+    - name: Configure CMake
+      run: cmake -B ${{github.workspace}}/build -GNinja
+
+    - name: Cache build directory
+      if: always()
+      uses: actions/cache/save@v4.3.0
+      env:
+        cache-folder-path: ${{github.workspace}}/build
+      with:
+        path: ${{ env.cache-folder-path }}
+        key: ${{ runner.os }}-${{env.BUILD_CACHE_KEY}}
+
+  lint:
+    runs-on: self-hosted
+    needs: prepare
+
+    steps:
+    - uses: actions/checkout@v4.1.1
+
+    - name: Import build directory
+      id: import-build
+      uses: actions/cache/restore@v4.3.0
+      env:
+        cache-folder-path: ${{github.workspace}}/build
+      with:
+        path: ${{ env.cache-folder-path }}
+        key: ${{ runner.os }}-${{env.BUILD_CACHE_KEY}}
+
+    - name: Lint
+      run: ninja -C ${{github.workspace}}/build lint
+
+    - name: Delete Previous Cache
+      if: ${{ always() && steps.import-build.outputs.cache-hit == 'true'}}
+      run: gh cache delete "${{ runner.os }}-${{env.BUILD_CACHE_KEY}}"
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Cache build directory
+      if: always()
+      uses: actions/cache/save@v4.3.0
+      env:
+        cache-folder-path: ${{github.workspace}}/build
+      with:
+        path: ${{ env.cache-folder-path }}
+        key: ${{ runner.os }}-${{env.BUILD_CACHE_KEY}}
+
+  simulate:
+    runs-on: self-hosted
+    needs: lint
+
+    steps:
+    - uses: actions/checkout@v4.1.1
+
+    - name: Import build directory
+      id: import-build
+      uses: actions/cache/restore@v4.3.0
+      env:
+        cache-folder-path: ${{github.workspace}}/build
+      with:
+        path: ${{ env.cache-folder-path }}
+        key: ${{ runner.os }}-${{env.BUILD_CACHE_KEY}}
+
+    - name: Build simulation
+      run: ninja -C ${{github.workspace}}/build build
+
+    - name: Simulate
+      id: simulate
+      # Enable -k option to simulate every module even if one fails
+      # Checks if there is any testdata
+      # Check if there is any fail in that testdata
+      run: >-
+        ninja -C ${{github.workspace}}/build -k 0 tests &&
+        ls -A1q ${{github.workspace}}/build/tests/testdata/ | grep -q . && 
+        (! grep -qe "[^;]*;0" ${{github.workspace}}/build/tests/testdata/*)
+
+    - name: Delete Previous Cache
+      if: ${{ always() && steps.import-build.outputs.cache-hit == 'true'}}
+      run: gh cache delete "${{ runner.os }}-${{env.BUILD_CACHE_KEY}}"
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Cache build directory
+      if: always()
+      uses: actions/cache/save@v4.3.0
+      env:
+        cache-folder-path: ${{github.workspace}}/build
+      with:
+        path: ${{ env.cache-folder-path }}
+        key: ${{ runner.os }}-${{env.BUILD_CACHE_KEY}}
+
+  synthesis:
+    runs-on: self-hosted
+    needs: simulate
+
+    steps:
+    - uses: actions/checkout@v4.1.1
+
+    - name: Import build directory
+      id: import-build
+      uses: actions/cache/restore@v4.3.0
+      env:
+        cache-folder-path: ${{github.workspace}}/build
+      with:
+        path: ${{ env.cache-folder-path }}
+        key: ${{ runner.os }}-${{env.BUILD_CACHE_KEY}}
+
+    - name: Synthesis
+      run: ninja -C ${{github.workspace}}/build synth
+
+    - name: Delete Previous Cache
+      if: ${{ always() && steps.import-build.outputs.cache-hit == 'true'}}
+      run: gh cache delete "${{ runner.os }}-${{env.BUILD_CACHE_KEY}}"
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Cache build directory
+      if: always()
+      uses: actions/cache/save@v4.3.0
+      env:
+        cache-folder-path: ${{github.workspace}}/build
+      with:
+        path: ${{ env.cache-folder-path }}
+        key: ${{ runner.os }}-${{env.BUILD_CACHE_KEY}}
+
+  report:
+    runs-on: self-hosted
+    needs: synthesis
+    if: always()
+
+    steps:
+    - uses: actions/checkout@v4.1.1
+
+    - name: Import build directory
+      id: import-build
+      uses: actions/cache/restore@v4.3.0
+      env:
+        cache-folder-path: ${{github.workspace}}/build
+      with:
+        path: ${{ env.cache-folder-path }}
+        key: ${{ runner.os }}-${{env.BUILD_CACHE_KEY}}
+
+    - name: Generate report
+      run: >-
+        ninja -C ${{github.workspace}}/build report_markdown &&
+        ninja -C ${{github.workspace}}/build report
+
+    - name: Write summary
+      run: cat ${{github.workspace}}/build/report.md >> $GITHUB_STEP_SUMMARY
+
+    - name: Upload report
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{env.REPORT_ARTIFACT_NAME}}
+        path: ${{github.workspace}}/build/report.html
+
+    - name: Check for report errors
+      run: (! grep -qe "\[\!CAUTION\]" ${{github.workspace}}/build/report.md)
+
+    - name: Generate badges
+      if: ${{ github.ref == 'refs/heads/main' }}
+      run: ninja -C ${{github.workspace}}/build badges;
+
+    - name: Check generated badges
+      if: ${{ always() && github.ref == 'refs/heads/main' }}
+      run: >-
+        if [ ! -f "build/test-result-badge.json" ]; then
+          mkdir -p build &&
+          echo "{\"schemaVersion\": 1, \"label\": \"Test result\", \"message\": \"Failed\", \"color\": \"red\"}" > build/test-result-badge.json;
+        fi
+
+    - name: Upload test result badge
+      if: ${{ always() && github.ref == 'refs/heads/main' }}
+      uses: exuanbo/actions-deploy-gist@v1.1.4
+      with:
+        token: ${{ secrets.GIST_SECRET }}
+        gist_id: d719fab2aa54dae4252f2acadd03cb33
+        file_path: build/test-result-badge.json
+        file_type: text 
+
+    - name: Upload traceability result badge
+      if: ${{ always() && github.ref == 'refs/heads/main' }}
+      uses: exuanbo/actions-deploy-gist@v1.1.4
+      with:
+        token: ${{ secrets.GIST_SECRET }}
+        gist_id: d719fab2aa54dae4252f2acadd03cb33
+        file_path: build/traceability-result-badge.json
+        file_type: text 
+
+    - name: Delete Previous Cache
+      if: ${{ always() && steps.import-build.outputs.cache-hit == 'true'}}
+      run: gh cache delete "${{ runner.os }}-${{env.BUILD_CACHE_KEY}}"
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Cache build directory
+      if: always()
+      uses: actions/cache/save@v4.3.0
+      env:
+        cache-folder-path: ${{github.workspace}}/build
+      with:
+        path: ${{ env.cache-folder-path }}
+        key: ${{ runner.os }}-${{env.BUILD_CACHE_KEY}}
+
+  documentation:
+    runs-on: self-hosted
+    needs: report
+
+    steps:
+    - uses: actions/checkout@v4.1.1
+
+    - name: Import build directory
+      uses: actions/cache/restore@v4.3.0
+      env:
+        cache-folder-path: ${{github.workspace}}/build
+      with:
+        path: ${{ env.cache-folder-path }}
+        key: ${{ runner.os }}-${{env.BUILD_CACHE_KEY}}
+
+    - name: Generate documentation
+      run: ninja -C ${{github.workspace}}/build docs
+
+    - uses: actions/upload-pages-artifact@v3.0.1
+      with: 
+        name: ${{env.DOCUMENTATION_ARTIFACT_NAME}}
+        path: ${{github.workspace}}/build/docs/documentation/build/html
+
+  deploy:
+    if: ${{ github.ref == 'refs/heads/main' }}
+    runs-on: self-hosted
+
+    needs: documentation
+
+    permissions:
+      pages: write
+      id-token: write
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+    - uses: actions/deploy-pages@v4.0.4
+      id: deployment
+      with:
+        artifact_name: ${{env.DOCUMENTATION_ARTIFACT_NAME}}
+        preview: true

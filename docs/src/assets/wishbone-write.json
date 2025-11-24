@@ -1,0 +1,15 @@
+{
+  signal: [
+    {name: 'clk_i', wave: 'P...'},
+    {name: 'adr_i', wave: 'x2x.', data: ['valid']},
+    {name: 'dat_o', wave: 'x...', data: ['valid']},
+    {name: 'dat_i', wave: 'x2x.', data: ['valid']},
+    {name: 'we_i',  wave: '010.'},
+    {name: 'sel_i', wave: 'x2x.', data: ['valid']},
+    {name: 'stb_i',  wave: '010.'},
+    {name: 'ack_o',  wave: '0.10'},
+    {name: 'cyc_i',  wave: '01.0'},
+    {name: 'stall_o',  wave: '0...'},
+  ],
+  config: { hscale: 2 }
+}

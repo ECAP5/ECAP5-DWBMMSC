@@ -1,0 +1,67 @@
+[*]
+[*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
+[*] Mon May  6 19:04:02 2024
+[*]
+[dumpfile] "/Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/wbmmsc/build/tests/waves/wb_interface.vcd"
+[dumpfile_mtime] "Mon May  6 19:01:33 2024"
+[dumpfile_size] 3303
+[savefile] "/Users/cchaine/Desktop/Documents/projects/.ecap5.nosync/design/wbmmsc/config/gtkwave/config/wb_interface.gtkw"
+[timestart] 1
+[size] 1440 783
+[pos] -1 -1
+*-4.879648 -1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+[treeopen] TOP.
+[treeopen] TOP.tb_wb_interface.
+[sst_width] 253
+[signals_width] 177
+[sst_expanded] 1
+[sst_vpaned_height] 209
+@24
+[color] 1
+TOP.tb_wb_interface.testcase[31:0]
+@28
+TOP.tb_wb_interface.clk_i
+TOP.tb_wb_interface.rst_i
+@800200
+-Wishbone
+@22
+[color] 2
+TOP.tb_wb_interface.wb_adr_i[31:0]
+[color] 2
+TOP.tb_wb_interface.wb_dat_i[31:0]
+[color] 2
+TOP.tb_wb_interface.wb_dat_o[31:0]
+@28
+[color] 2
+TOP.tb_wb_interface.wb_we_i
+@22
+[color] 2
+TOP.tb_wb_interface.wb_sel_i[3:0]
+@28
+[color] 2
+TOP.tb_wb_interface.wb_stb_i
+[color] 2
+TOP.tb_wb_interface.wb_ack_o
+[color] 2
+TOP.tb_wb_interface.wb_cyc_i
+[color] 2
+TOP.tb_wb_interface.wb_stall_o
+@1000200
+-Wishbone
+@22
+[color] 7
+TOP.tb_wb_interface.addr_o[7:0]
+@28
+[color] 7
+TOP.tb_wb_interface.read_o
+@22
+[color] 7
+TOP.tb_wb_interface.read_data_i[31:0]
+@28
+[color] 7
+TOP.tb_wb_interface.write_o
+@22
+[color] 7
+TOP.tb_wb_interface.write_data_o[31:0]
+[pattern_trace] 1
+[pattern_trace] 0

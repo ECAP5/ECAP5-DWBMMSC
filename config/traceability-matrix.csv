@@ -1,0 +1,8 @@
+tb_wb_interface.reset.01;F_WISHBONE_RESET_01
+tb_wb_interface.reset.02;F_WISHBONE_RESET_02
+tb_wb_interface.read.01;F_WISHBONE_READ_CYCLE_01
+tb_wb_interface.read.02;F_WISHBONE_TRANSFER_CYCLE_01;F_WISHBONE_HANDSHAKE_01;F_WISHBONE_READ_CYCLE_01
+tb_wb_interface.write.01;F_WISHBONE_WRITE_CYCLE_01
+tb_wb_interface.write.02;F_WISHBONE_WRITE_CYCLE_01
+__UNTRACEABLE__;F_WISHBONE_DATASHEET_01;This requirement is covered by the hdl code.
+__UNTRACEABLE__;F_WISHBONE_TIMING_01;This requirement is covered by the hdl code.

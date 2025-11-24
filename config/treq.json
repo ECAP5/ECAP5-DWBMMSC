@@ -1,0 +1,8 @@
+{
+  "spec_dir_path": "../docs/src/spec/",
+  "test_dir_path": "../tests/",
+  "testdata_dir_path": "../build/tests/testdata/",
+  "matrix_path": "../config/traceability-matrix.csv",
+  "spec_format" : "RST",
+  "disable_allocation": true
+}

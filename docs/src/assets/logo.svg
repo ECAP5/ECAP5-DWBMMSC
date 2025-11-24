@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg width="1024px" height="1024px" viewBox="0 0 1024 1024" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient gradientUnits="objectBoundingBox" x1="0.6294096" y1="0.9829629" x2="0.37059045" y2="0.017037094" id="gradient_1">
+      <stop offset="0.046084974%" stop-color="#FEE498" />
+      <stop offset="100%" stop-color="#F1BE62" />
+    </linearGradient>
+    <filter filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB" id="filter_1">
+      <feFlood flood-opacity="0" result="BackgroundImageFix" />
+      <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 128 0" />
+      <feOffset dx="0" dy="0" />
+      <feGaussianBlur stdDeviation="25" />
+      <feColorMatrix type="matrix" values="0 0 0 0 0.14509805 0 0 0 0 0.14509805 0 0 0 0 0.13333334 0 0 0 0.52156866 0" />
+      <feBlend mode="normal" in2="BackgroundImageFix" result="effect0_dropShadow" />
+      <feBlend mode="normal" in="SourceGraphic" in2="effect0_dropShadow" result="shape" />
+    </filter>
+    <path d="M1024 0L1024 0L1024 1024L0 1024L0 0L1024 0Z" id="path_1" />
+    <clipPath id="clip_1">
+      <use xlink:href="#path_1" clip-rule="evenodd" fill-rule="evenodd" />
+    </clipPath>
+  </defs>
+  <g id="Icon 1024">
+    <path d="M1024 0L1024 0L1024 1024L0 1024L0 0L1024 0Z" id="Icon-1024" fill="#252522" stroke="none" />
+    <path d="M0 0L1024 0L1024 1024L0 1024L0 0Z" id="Rectangle" fill="#4A0A0A" fill-rule="evenodd" stroke="none" clip-path="url(#clip_1)" />
+    <path d="M109.5 914.5L512 804L220 512L109.5 914.5Z" id="Path" fill="#B8011F" fill-rule="evenodd" stroke="none" clip-path="url(#clip_1)" />
+    <path d="M512 512L0 1024" id="Path" fill="none" fill-rule="evenodd" stroke="#B8011F" stroke-width="178" stroke-linecap="square" clip-path="url(#clip_1)" />
+    <path d="M794.05 436.425C835.789 592.197 743.347 752.311 587.575 794.05C431.803 835.789 271.689 743.347 229.95 587.575C188.211 431.803 280.653 271.689 436.425 229.95C592.197 188.211 752.311 280.653 794.05 436.425Z" id="Oval" fill="#D09D6E" fill-rule="evenodd" stroke="none" filter="url(#filter_1)" clip-path="url(#clip_1)" />
+    <path d="M729.674 453.032C761.979 573.595 690.431 697.519 569.867 729.824C449.304 762.129 325.38 690.581 293.075 570.018C260.77 449.455 332.318 325.53 452.881 293.226C573.445 260.921 697.369 332.468 729.674 453.032Z" id="Oval" fill="url(#gradient_1)" fill-rule="evenodd" stroke="none" clip-path="url(#clip_1)" />
+    <path d="M400 512.204C400 450.235 450.235 400 512.204 400C574.172 400 624.407 450.235 624.407 512.204C624.407 574.172 574.172 624.407 512.204 624.407C450.235 624.407 400 574.172 400 512.204Z" id="Oval" fill="#191815" fill-rule="evenodd" stroke="none" clip-path="url(#clip_1)" />
+  </g>
+</svg>
