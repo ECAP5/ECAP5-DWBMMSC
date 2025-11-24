@@ -198,7 +198,7 @@ jobs:
       uses: exuanbo/actions-deploy-gist@v1.1.4
       with:
         token: ${{ secrets.GIST_SECRET }}
-        gist_id: d719fab2aa54dae4252f2acadd03cb33
+        gist_id: 0f899b16fcac5f7326090746c833b3a8
         file_path: build/test-result-badge.json
         file_type: text 
 
@@ -207,7 +207,7 @@ jobs:
       uses: exuanbo/actions-deploy-gist@v1.1.4
       with:
         token: ${{ secrets.GIST_SECRET }}
-        gist_id: d719fab2aa54dae4252f2acadd03cb33
+        gist_id: 0f899b16fcac5f7326090746c833b3a8
         file_path: build/traceability-result-badge.json
         file_type: text 
 
