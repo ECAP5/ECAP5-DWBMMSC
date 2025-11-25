@@ -41,7 +41,7 @@ module ecap5_dwbmmsc
   //=================================
   //    Output interface
 
-  output  logic[7:0]   addr_o,
+  output  logic[31:0]  addr_o,
   output  logic        read_o,
   input   logic[31:0]  read_data_i,
   output  logic        write_o,
@@ -98,7 +98,7 @@ assign wb_ack_o = wb_ack_q;
 assign wb_dat_o = read_data_i;
 assign wb_stall_o = 0;
 
-assign addr_o = wb_adr_i[7:0];
+assign addr_o = wb_adr_i;
 assign read_o  = wb_stb_i && wb_cyc_i && ~wb_we_i;
 assign write_o = wb_stb_i && wb_cyc_i && wb_we_i;
 assign write_data_o = wb_dat_i;
