@@ -163,7 +163,7 @@ void tb_ecap5_dwbmmsc_read(TB_Ecap5_dwbmmsc * tb) {
   //      Checks 
   
   tb->check(COND_output, (core->read_o == 1) &&
-                         (core->addr_o == (addr & 0xFF)) &&
+                         (core->addr_o == addr) &&
                          (core->write_o == 0));
 
   //=================================
@@ -251,7 +251,7 @@ void tb_ecap5_dwbmmsc_write(TB_Ecap5_dwbmmsc * tb) {
   //      Checks 
   
   tb->check(COND_output, (core->read_o == 0) &&
-                         (core->addr_o == (addr & 0xFF)) &&
+                         (core->addr_o == addr) &&
                          (core->write_o == 1) &&
                          (core->write_data_o == data));
 
