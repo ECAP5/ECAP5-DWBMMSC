@@ -47,7 +47,8 @@ module tb_ecap5_dwbmmsc
   output  logic        read_o,
   input   logic[31:0]  read_data_i,
   output  logic        write_o,
-  output  logic[31:0]  write_data_o
+  output  logic[31:0]  write_data_o,
+  output  logic[3:0]   sel_o
 );
 
 ecap5_dwbmmsc dut (
@@ -68,7 +69,8 @@ ecap5_dwbmmsc dut (
   .read_o       (read_o),
   .read_data_i  (read_data_i),
   .write_o      (write_o),
-  .write_data_o (write_data_o)
+  .write_data_o (write_data_o),
+  .sel_o        (sel_o)
 );
 
 endmodule // tb_ecap5_dwbmmsc
