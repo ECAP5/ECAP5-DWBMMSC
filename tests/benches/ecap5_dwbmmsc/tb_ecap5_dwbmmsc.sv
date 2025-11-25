@@ -43,7 +43,7 @@ module tb_ecap5_dwbmmsc
   //=================================
   //    Output interface
 
-  output  logic[7:0]   addr_o,
+  output  logic[31:0]  addr_o,
   output  logic        read_o,
   input   logic[31:0]  read_data_i,
   output  logic        write_o,
