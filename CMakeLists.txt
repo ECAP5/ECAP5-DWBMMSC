@@ -19,16 +19,15 @@
 # You should have received a copy of the GNU General Public License
 # along with ECAP5-DWBMMSC.  If not, see <http://www.gnu.org/licenses/>.
 
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.21)
 include(FetchContent)
 
-project(ECAP5_DWBMMSC VERSION 1.0.0)
+project(ECAP5_DWBMMSC)
 
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 set(CMAKE_PREFIX_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
 # Create python virtual env
-message(STATUS "Creating python venv")
 set(VENV_DIR ${CMAKE_BINARY_DIR}/venv)
 if(NOT EXISTS "${VENV_DIR}")
   find_package(Python3 COMPONENTS Interpreter)
@@ -41,50 +40,60 @@ find_package(Python3 COMPONENTS Interpreter Development)
 
 # Dependencies
 
-message(STATUS "Collecting dependencies")
 include(${CMAKE_CURRENT_LIST_DIR}/cmake/dependency.cmake)
 
-add_dependency(ECAP5_TREQ 
-  GIT ecap5/ecap5-treq
-  TAG tags/v2.3.1
-  BINARY ecap5-treq)
-
-add_dependency(ECAP5_DTESTLIB
-  GIT ecap5/ecap5-dtestlib
-  TAG release/v1.1.0)
-
-add_dependency(sphinx-cmake
+add_dependency(
   GIT ecap5/sphinx-cmake
   TAG tags/v1.0.1)
 
-add_dependency(verilator-cmake
+add_dependency(
   GIT ecap5/verilator-cmake
   TAG tags/v1.0.1)
 
-add_dependency(oss-cad-suite-cmake
+add_dependency(
+  GIT ecap5/ecap5-treq
+  TAG 109-use-cmake-interface-libraries
+  BINARY ecap5-treq)
+
+add_dependency(
   GIT ecap5/oss-cad-suite-cmake
-  TAG tags/v1.0.0)
+  TAG 3-use-cmake-interface-libraries)
 
-# Configure dependencies
+add_dependency(
+  GIT ecap5/ecap5-dtestlib
+  TAG 36-use-cmake-interface-libraries)
 
-include(${verilator_cmake_SOURCE_DIR}/cmake/verilator-config.cmake)
-include(${ecap5_treq_SOURCE_DIR}/config.cmake)
-list(APPEND CMAKE_MODULE_PATH "${sphinx_cmake_SOURCE_DIR}/cmake")
-include(${oss_cad_suite_cmake_SOURCE_DIR}/cmake/oss-cad-suite-config.cmake)
-include(${ecap5_dtestlib_SOURCE_DIR}/cmake/testbench.cmake)
-include(${ecap5_dtestlib_SOURCE_DIR}/cmake/lint.cmake)
+# Define an interface library
 
-# Include subdirectories
+add_library(ecap5_dwbmmsc INTERFACE)
+target_sources(ecap5_dwbmmsc INTERFACE
+  ${CMAKE_CURRENT_LIST_DIR}/src/ecap5_dwbmmsc.sv
+)
 
-add_subdirectory(docs)
-add_subdirectory(tests)
+# Only perform if the project will be tested
 
-# Synthesis
+if(PROJECT_IS_TOP_LEVEL)
+  # Configure dependencies
 
-add_synthesis_target(
-  SOURCES ${CMAKE_CURRENT_LIST_DIR}/src/*
-  TOP_MODULE ecap5_dwbmmsc
-  TARGET_FPGA ecp5
-  OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/synth.json)
+  list(APPEND CMAKE_MODULE_PATH "${ecap5_sphinx_cmake_SOURCE_DIR}/cmake")
+  include(${ecap5_verilator_cmake_SOURCE_DIR}/cmake/verilator-config.cmake)
+  include(${ecap5_ecap5_treq_SOURCE_DIR}/config.cmake)
+  include(${ecap5_oss_cad_suite_cmake_SOURCE_DIR}/cmake/oss-cad-suite-config.cmake)
+  include(${ecap5_ecap5_dtestlib_SOURCE_DIR}/cmake/testbench.cmake)
+  include(${ecap5_ecap5_dtestlib_SOURCE_DIR}/cmake/lint.cmake)
 
-add_custom_target(synth DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/synth.json)
+  # Add subdirectories
+
+  add_subdirectory(docs)
+  add_subdirectory(tests)
+
+  # Synthesis
+
+  add_synthesis_target(
+    LIB        ecap5_dwbmmsc
+    TOP_MODULE ecap5_dwbmmsc
+    TARGET_FPGA ecp5
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/synth.json)
+
+  add_custom_target(synth DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/synth.json)
+endif()
