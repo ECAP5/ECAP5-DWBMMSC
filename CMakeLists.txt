@@ -52,16 +52,16 @@ add_dependency(
 
 add_dependency(
   GIT ecap5/ecap5-treq
-  TAG 109-use-cmake-interface-libraries
+  TAG release/v3.0.0
   BINARY ecap5-treq)
 
 add_dependency(
   GIT ecap5/oss-cad-suite-cmake
-  TAG 3-use-cmake-interface-libraries)
+  TAG release/v2.0.0)
 
 add_dependency(
   GIT ecap5/ecap5-dtestlib
-  TAG 36-use-cmake-interface-libraries)
+  TAG release/v1.1.0)
 
 # Define an interface library
 
